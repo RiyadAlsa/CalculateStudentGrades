@@ -1,0 +1,119 @@
+//Here we declare all the libraries we will use
+#include <stdio.h>
+#include <stdlib.h>
+
+//This is the struct we declare under the name Student
+typedef struct {
+  char name[60];
+  double cSharp, math, systems;
+  double total;
+} Student;
+
+//Headers for all the methods in the program
+void inputStudents(Student * students[ ], int size);
+void statsStudents(Student * students[ ], int size, double stats[ ]);
+void printStudents(Student * students[ ], int size, const double stats[ ]);
+
+//Main method
+int main(void) {
+
+  //Ask the user to input the size of the class
+  int num;
+  printf("Enter how many students: ");
+  scanf("%d", &num);
+
+  //Make sure it is an actual class of more than one student
+  while(num<2){
+    printf("Size must be greater than one\n");
+    printf("Enter how many students: ");
+    scanf("%d", &num);
+  }
+  
+  
+  Student **students;
+  
+  students = malloc(sizeof(Student*)*num);
+  
+  double *stats = (double*)malloc(sizeof(double)*num);
+  
+  inputStudents(students, num);
+  statsStudents(students, num, stats);
+  printStudents(students, num, stats);
+  
+  return 0;
+}
+
+//This is the method we will use to input students
+void inputStudents(Student * students[ ], int size) {
+  //Iterate through the size we passed
+  for (int i = 0; i < size; i++) {
+  	//Create a student pointer the size of student
+    Student *s = (Student*) malloc(sizeof(Student));
+    //Here we just ask the questions and assign them to the student
+    students[i] = s;
+    printf("Enter Student %d's name: ", i+1);
+    scanf("%s", s->name);
+    printf("CSharp: ");
+    scanf("%lf", &s->cSharp);
+    	//Verify the grade is valid
+    	while (students[i]-> cSharp > 100 || students[i]-> cSharp < 0){
+    		printf("Grade must be between 0 and 100\n");
+			printf("CSharp: ");
+    		scanf("%lf", &s->cSharp);
+		}
+    printf("Math: ");
+    scanf("%lf", &s->math);
+    	//Verify the grade is valid
+    	while (students[i]-> math > 100 || students[i]-> math < 0){
+    		printf("Grade must be between 0 and 100\n");
+			printf("Math: ");
+    		scanf("%lf", &s->math);
+		}
+    printf("Systems: ");
+    scanf("%lf", &s->systems);
+    	//Verify the grade is valid
+   	 	while (students[i]-> systems > 100 || students[i]-> systems < 0){
+    		printf("Grade must be between 0 and 100\n");
+			printf("Systems: ");
+    		scanf("%lf", &s->systems);
+		}
+  }
+}
+
+//Here we calculate the stats of the class
+void statsStudents(Student * students[ ], int size, double stats[ ]) {
+  //Stats[0] is used to determine the min, 1 the max and 2 the avg
+  stats[0] = 300, stats[1] = 0, stats[2] = 0;
+  //Here we iterate through the size of the class and create their totals, and add the total to stats[2]
+  for (int i = 0; i < size; i++) {
+    students[i]->total = students[i]->systems + students[i]->cSharp + students[i]->math;
+    stats[2] += students[i]->total;
+    //If their total is the smallest weve seen, it will be inserted into stats[0]
+    if (students[i]->total < stats[0]) {
+      stats[0] = students[i]->total;
+    }
+    //If their total is the largest weve seen, it will be insterted into stats[1]
+    if (students[i]->total > stats[1]) {
+      stats[1] = students[i]->total;
+    }
+  }
+  //Calculate the avg of the sum of totals
+  stats[2] = stats[2]/size;
+}
+
+//Here we iterate through the students array and display the grades along with the name aswell as the stats
+void printStudents(Student * students[ ], int size, const double stats[ ]){
+  printf("\n");
+  printf("=============================================\n");
+  printf("\n");
+  printf("Number\t\tCSharp\t\tMath\t\tSystems\t\tTotal\t\tName\n");
+  //Iterate through the array
+  for (int i = 0; i < size; i++) {
+  	//Print out the grades, total and name of each student
+    printf("%d\t\t%.2lf\t\t%.2lf\t\t%.2lf\t\t%.2lf\t\t%s\n", (i+1), students[i]->cSharp, students[i]->math, students[i]->systems, students[i]->total, students[i]->name);
+  }
+  printf("\n");
+  printf("Statistics of class: \n");
+  //Print out the stats of the class
+  printf("min = %.2lf, max = %.2lf, avg = %.2lf", stats[0], stats[1], stats[2]);
+}
